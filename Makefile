@@ -1,4 +1,4 @@
-CWD := $(shell pwd)
+CWD = .
 
 ERTS_INCLUDE_DIR ?= $(shell erl -noshell -eval "io:format(\"~s/erts-~s/include/\", [code:root_dir(), erlang:system_info(version)])." -s erlang halt)
 MIX_BUILD_PATH ?= $(CWD)/priv
@@ -29,21 +29,21 @@ else ifneq (,$(findstring gcc, $(CC)))
 else
 	CFLAGS += -g
 endif
-CFLAGS += -fPIC -I $(ERTS_INCLUDE_DIR)
+CFLAGS += -fPIC -I "$(ERTS_INCLUDE_DIR)"
 LDFLAGS += -shared
 
 all: $(PICOSAT_BUILD_OUTPUT)
 
 clean:
-	rm -f $(PICOSAT_BUILD_OUTPUT)
+	rm -f "$(PICOSAT_BUILD_OUTPUT)"
 	rm -f $(PICOSAT_BUILD_DIR)/*.o
 
 analyze:
 	clang --analyze $(CFLAGS) $(C_SRC_DIR)/*.{c,h}
 
 $(PICOSAT_BUILD_OUTPUT): $(PICOSAT_BUILD_DIR)/picosat.o $(PICOSAT_BUILD_DIR)/picosat_nif.o
-	@mkdir -p $(PICOSAT_BUILD_OUTPUT_DIR)/priv
-	$(CC) $(LDFLAGS) $(LDLIBS) $(PICOSAT_BUILD_DIR)/picosat_nif.o $(PICOSAT_BUILD_DIR)/picosat.o -o $(PICOSAT_BUILD_OUTPUT)
+	@mkdir -p "$(PICOSAT_BUILD_OUTPUT_DIR)"
+	$(CC) $(LDFLAGS) $(LDLIBS) $(PICOSAT_BUILD_DIR)/picosat_nif.o $(PICOSAT_BUILD_DIR)/picosat.o -o "$(PICOSAT_BUILD_OUTPUT)"
 
 $(PICOSAT_BUILD_DIR)/picosat.o: $(C_SRC_DIR)/picosat.c $(C_SRC_DIR)/picosat.h
 	$(CC) $(CFLAGS) -o $(PICOSAT_BUILD_DIR)/picosat.o -c $<
